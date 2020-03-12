@@ -23,6 +23,9 @@ before do
     @current_user = users_table.where(id: session["user_id"]).to_a[0]
 end
 
+
+
+
 # homepage and list of events (aka "index")
 get "/" do
     puts "params: #{params}"
@@ -79,6 +82,12 @@ end
 post "/rsvps/:id/update" do
     puts "params: #{params}"
 
+    @rsvp = rsvps_table.where(id: params["id"]).to_a[0]    
+    @event = events_table.where(id: @rsvp[:event_id]).to_a[0]
+    rsvps_table.where(id: params["id"]).update(
+        going: params["going"],
+        comments: params["comments"]
+    )    
     view "update_rsvp"
 end
 
@@ -139,5 +148,5 @@ end
 get "/logout" do
     # remove encrypted cookie for logged out user
     session["user_id"] = nil
-    view "logout"
+    redirect "/logins/new"
 end
